@@ -1,12 +1,13 @@
-type Props = {
-  index: number
-}
-
-export default function Pad({ index }: Props) {
+export const DrumPad = () => {
   return (
-    <div className="flex flex-col">
-      <div className="w-30 h-30 aspect-square bg-[var(--bg-element)] border-2 border-[var(--border-default)] transition-colors pad" id={`pad${index}`} />
-      <div className="text-[var(--text-default)] text-xs mt-1">PAD{index + 1}</div>
+    <div className="relative w-24 h-24 cursor-pointer select-none">
+      {/* グラデーション枠 */}
+      <div className="absolute inset-0 rounded-md bg-gradient-to-r from-red-500 to-red-400 p-[3px]">
+        {/* 内側の黒背景 */}
+        <div className="w-full h-full bg-default-strong rounded-md flex items-center justify-center text-white text-xl font-bold">
+          {/* 中央のラベルやアイコンはここに */}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};

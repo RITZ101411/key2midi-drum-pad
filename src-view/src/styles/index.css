@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+    html {
+        color-scheme: dark;
+    }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+}
+
+@theme {
+    --color-default: rgb(32, 32, 32);
+    --color-default-strong: rgb(17, 17, 17);
+
+    --color-red: rgb(181, 59, 59);
+    --color-red-gradient: rgb(190, 93, 92);
+}
