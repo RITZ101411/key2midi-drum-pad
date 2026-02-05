@@ -1,9 +1,10 @@
 type Props = {
   index: number
   isActive: boolean
+  velocity: number
 }
 
-export const DrumPad = ({ index, isActive }: Props) => {
+export const DrumPad = ({ index, isActive, velocity }: Props) => {
   const handleMouseDown = () => {
     (window as any).pywebview.api.pad_press(index);
   };
@@ -26,7 +27,10 @@ export const DrumPad = ({ index, isActive }: Props) => {
           <div className="w-full h-full bg-default-strong rounded-md flex items-center justify-center text-white text-xl font-bold"></div>
         </div>
       </div>
-      <div className="text-gray-400 text-xs mt-1">PAD{index + 1}</div>
+      <div className="flex gap-2 text-xs mt-1">
+        <span className="text-gray-400">PAD{index + 1}</span>
+        {velocity > 0 && <span className="text-red-400">V:{velocity}</span>}
+      </div>
     </div>
   )
 }

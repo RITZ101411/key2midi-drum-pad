@@ -3,17 +3,19 @@ import "./styles/index.css";
 import { useState, useEffect } from "react";
 
 function App() {
-  const [activePads, setActivePads] = useState<Set<number>>(new Set());
+  const [activePads, setActivePads] = useState<Map<number, number>>(new Map());
 
   useEffect(() => {
     const handlePadPress = (e: CustomEvent) => {
-      setActivePads(prev => new Set(prev).add(e.detail));
+      const { index, velocity } = e.detail;
+      setActivePads(prev => new Map(prev).set(index, velocity));
     };
 
     const handlePadRelease = (e: CustomEvent) => {
+      const { index } = e.detail;
       setActivePads(prev => {
-        const next = new Set(prev);
-        next.delete(e.detail);
+        const next = new Map(prev);
+        next.delete(index);
         return next;
       });
     };
@@ -30,7 +32,12 @@ function App() {
     <div className="p-4 flex justify-center">
       <div className="grid grid-cols-4 gap-x-4 gap-y-1">
         {Array.from({ length: 16 }, (_, i) => (
-          <DrumPad key={i} index={i} isActive={activePads.has(i)} />
+          <DrumPad 
+            key={i} 
+            index={i} 
+            isActive={activePads.has(i)} 
+            velocity={activePads.get(i) || 0}
+          />
         ))}
       </div>
     </div>
