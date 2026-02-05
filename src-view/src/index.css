@@ -1,54 +1,29 @@
-body {
-  margin: 0;
-  padding: 12.5px;
-  background: #212121;
-  font-family: Arial, sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.top-buttons {
-  display: flex;
-  gap: 25px;
-  margin-bottom: 5px;
-}
-
-.top-btn {
-  width: 120px;
-  height: 60px;
-  background: #1a1a1a;
-  border: 3.5px solid #e942b1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #dadada;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 120px);
-  gap: 5px 25px;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
-.pad {
-  width: 120px;
-  height: 120px;
-  background: #1a1a1a;
-  border: 2px solid #dadada;
-  transition: border-color 0.1s;
+@layer base {
+  :root {
+    --bg-main: #212121;
+    --bg-element: #1a1a1a;
+    --border-default: #dadada;
+    --border-accent: #e942b1;
+    --border-active: #ff0059;
+    --text-default: #dadada;
+  }
 }
 
 .pad.active {
-  border-color: #ff0059;
+  border-color: var(--border-active);
 }
 
-.label {
-  color: #dadada;
-  font-size: 9px;
-  margin-top: 4px;
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-main);
+    }
 }

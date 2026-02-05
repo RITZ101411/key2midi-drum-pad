@@ -1,21 +1,21 @@
+import TopButton from './components/TopButton'
+import Pad from './components/Pad'
+
 function App() {
   return (
-    <>
-      <div className="top-buttons">
-        <div className="top-btn">PAD設定</div>
-        <div className="top-btn"></div>
-        <div className="top-btn"></div>
-        <div className="top-btn"></div>
+    <div className="p-5 bg-[var(--bg-main)] font-sans">
+      <div className="flex gap-6 mb-2">
+        <TopButton label="PAD設定" />
+        <TopButton />
+        <TopButton />
+        <TopButton />
       </div>
-      <div className="grid">
+      <div className="grid grid-cols-4 gap-6">
         {Array.from({ length: 16 }, (_, i) => (
-          <div key={i} className="container">
-            <div className="pad" id={`pad${i}`}></div>
-            <div className="label">PAD{i + 1}</div>
-          </div>
+          <Pad key={i} index={i} />
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
