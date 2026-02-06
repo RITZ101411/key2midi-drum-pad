@@ -3,9 +3,14 @@ import mido
 import webview
 import os
 import json
+import sys
 
-# Load config
-config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
+if getattr(sys, 'frozen', False):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.dirname(__file__))
+
+config_path = os.path.join(base_path, 'config.json')
 with open(config_path, 'r') as f:
     config = json.load(f)
 
@@ -23,13 +28,11 @@ class Api:
     def set_window_focus(self, focused):
         global window_focused
         window_focused = focused
-        print(f'Window focus: {focused}')
         return True
     
     def set_always_on_top(self, on_top):
         if window:
             window.on_top = on_top
-            print(f'Always on top: {on_top}')
         return True
     
     def get_config(self):
@@ -42,10 +45,14 @@ class Api:
         KEYS = [pad['key'] for pad in config['pads']]
         VELOCITY = config.get('velocity', 80)
         
-        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
+        if getattr(sys, 'frozen', False):
+            config_path = os.path.expanduser('~/Library/Application Support/fk2-hid-midi/config.json')
+            os.makedirs(os.path.dirname(config_path), exist_ok=True)
+        else:
+            config_path = os.path.join(base_path, 'config.json')
+        
         with open(config_path, 'w') as f:
             json.dump(config, f, indent=2)
-        print('Config saved')
         return True
     
     def pad_press(self, index):
@@ -56,7 +63,6 @@ class Api:
                 try:
                     msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
                     outport.send(msg)
-                    print(f'Sent: {msg}')
                 except Exception as e:
                     print(f'MIDI send error: {e}')
                 if window:
@@ -73,7 +79,6 @@ class Api:
                 try:
                     msg = mido.Message('note_off', note=note, velocity=0, channel=0)
                     outport.send(msg)
-                    print(f'Sent: {msg}')
                 except Exception as e:
                     print(f'MIDI send error: {e}')
                 if window:
@@ -96,7 +101,6 @@ def on_press(key):
             try:
                 msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
                 outport.send(msg)
-                print(f'Sent: {msg}')
             except Exception as e:
                 print(f'MIDI send error: {e}')
                 pressed_keys.discard(key_char)
@@ -121,7 +125,6 @@ def on_release(key):
             try:
                 msg = mido.Message('note_off', note=note, velocity=0, channel=0)
                 outport.send(msg)
-                print(f'Sent: {msg}')
             except Exception as e:
                 print(f'MIDI send error: {e}')
                 return
@@ -146,16 +149,13 @@ def main():
     
     try:
         outport = mido.open_output('fk2-midi', virtual=True)
-        print(f'Default MIDI device: fk2-midi (virtual)')
     except Exception as e:
         print(f'Failed to create virtual MIDI device: {e}')
         try:
             outputs = mido.get_output_names()
             if outputs:
                 outport = mido.open_output(outputs[0])
-                print(f'Default MIDI device: {outputs[0]}')
             else:
-                print('No MIDI devices available')
                 outport = None
         except Exception as e:
             print(f'Failed to open MIDI device: {e}')
@@ -164,8 +164,7 @@ def main():
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
     listener.start()
     
-    html_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dist', 'index.html'))
-    print(f"Loading HTML from: {html_path}")
+    html_path = os.path.join(base_path, 'dist', 'index.html')
     window = webview.create_window('fk2-hid-midi', url=f'file://{html_path}', width=500, height=600, resizable=False, js_api=Api())
     
     try:
