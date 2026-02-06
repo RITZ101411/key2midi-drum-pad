@@ -17,6 +17,7 @@ window = None
 outport = None
 listener = None
 window_focused = False
+pressed_keys = set()
 
 class Api:
     def set_window_focus(self, focused):
@@ -79,12 +80,17 @@ def on_press(key):
     if not window_focused:
         return
     try:
-        note = KEY_TO_NOTE.get(key.char)
+        key_char = key.char
+        if key_char in pressed_keys:
+            return
+        
+        note = KEY_TO_NOTE.get(key_char)
         if note:
+            pressed_keys.add(key_char)
             msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
             outport.send(msg)
             print(f'Sent: {msg}')
-            idx = KEYS.index(key.char)
+            idx = KEYS.index(key_char)
             if window:
                 try:
                     window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padPress', {{detail: {{index: {idx}, velocity: {VELOCITY}}}}}))")
@@ -97,12 +103,14 @@ def on_release(key):
     if not window_focused:
         return
     try:
-        note = KEY_TO_NOTE.get(key.char)
+        key_char = key.char
+        note = KEY_TO_NOTE.get(key_char)
         if note:
+            pressed_keys.discard(key_char)
             msg = mido.Message('note_off', note=note, velocity=0, channel=0)
             outport.send(msg)
             print(f'Sent: {msg}')
-            idx = KEYS.index(key.char)
+            idx = KEYS.index(key_char)
             if window:
                 try:
                     window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padRelease', {{detail: {{index: {idx}}}}}))")
