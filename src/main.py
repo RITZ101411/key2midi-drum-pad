@@ -4,13 +4,26 @@ import webview
 import os
 import json
 import sys
+import shutil
 
 if getattr(sys, 'frozen', False):
     base_path = sys._MEIPASS
+    user_config_path = os.path.expanduser('~/Library/Application Support/key2midi-pad/config.json')
+    
+    if os.path.exists(user_config_path):
+        config_path = user_config_path
+    else:
+        default_config_path = os.path.join(base_path, 'config.json')
+        if os.path.exists(default_config_path):
+            os.makedirs(os.path.dirname(user_config_path), exist_ok=True)
+            shutil.copy(default_config_path, user_config_path)
+            config_path = user_config_path
+        else:
+            config_path = default_config_path
 else:
     base_path = os.path.dirname(os.path.dirname(__file__))
+    config_path = os.path.join(base_path, 'config.json')
 
-config_path = os.path.join(base_path, 'config.json')
 with open(config_path, 'r') as f:
     config = json.load(f)
 
@@ -45,13 +58,12 @@ class Api:
         KEYS = [pad['key'] for pad in config['pads']]
         VELOCITY = config.get('velocity', 80)
         
+        save_path = config_path
         if getattr(sys, 'frozen', False):
-            config_path = os.path.expanduser('~/Library/Application Support/key2midi-pad/config.json')
-            os.makedirs(os.path.dirname(config_path), exist_ok=True)
-        else:
-            config_path = os.path.join(base_path, 'config.json')
+            save_path = os.path.expanduser('~/Library/Application Support/key2midi-pad/config.json')
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
         
-        with open(config_path, 'w') as f:
+        with open(save_path, 'w') as f:
             json.dump(config, f, indent=2)
         return True
     
