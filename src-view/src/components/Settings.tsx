@@ -13,6 +13,7 @@ export const Settings = ({ onClose }: Props) => {
   const [config, setConfig] = useState<Config | null>(null)
   const [velocity, setVelocity] = useState(80)
   const [pads, setPads] = useState<Array<{ key: string; note: number }>>([])
+  const [isClosing, setIsClosing] = useState(false)
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -28,6 +29,13 @@ export const Settings = ({ onClose }: Props) => {
     loadConfig()
   }, [])
 
+  const handleClose = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      onClose()
+    }, 300)
+  }
+
   const handleSave = async () => {
     if (!config) return
     
@@ -38,7 +46,7 @@ export const Settings = ({ onClose }: Props) => {
     
     try {
       await (window as any).pywebview.api.save_config(newConfig)
-      onClose()
+      handleClose()
     } catch (e) {
       console.error('Failed to save config:', e)
     }
@@ -55,8 +63,18 @@ export const Settings = ({ onClose }: Props) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-default/80 p-6 rounded-lg w-[600px] max-h-[80vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end justify-center z-50 ${
+        isClosing ? 'animate-fade-out' : 'animate-fade-in'
+      }`} 
+      onClick={handleClose}
+    >
+      <div 
+        className={`bg-default/80 p-6 rounded-t-lg w-full h-[90vh] overflow-y-auto shadow-2xl ${
+          isClosing ? 'animate-slide-down' : 'animate-slide-up'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-white text-xl mb-4">Settings</h2>
         
         <div className="mb-4">
@@ -108,7 +126,7 @@ export const Settings = ({ onClose }: Props) => {
             Save
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="flex-1 bg-gray-dark hover:bg-gray-medium text-white px-4 py-2 rounded"
           >
             Cancel
