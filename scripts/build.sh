@@ -15,12 +15,12 @@ echo "Building app with PyInstaller..."
 uv run pyinstaller build.spec --distpath build-output --workpath build-temp
 
 echo "Signing app..."
-codesign --force --deep --sign - build-output/fk2-hid-midi.app
+codesign --force --deep --sign - build-output/key2midi-pad.app
 
 echo "Build complete!"
-echo "App location: build-output/fk2-hid-midi.app"
+echo "App location: build-output/key2midi-pad.app"
 echo ""
 echo "IMPORTANT: Grant accessibility permissions:"
 echo "1. Open System Preferences > Privacy & Security > Accessibility"
-echo "2. Add fk2-hid-midi.app and enable it"
+echo "2. Add key2midi-pad.app and enable it"
 echo "3. Also check Input Monitoring section"

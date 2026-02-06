@@ -46,7 +46,7 @@ class Api:
         VELOCITY = config.get('velocity', 80)
         
         if getattr(sys, 'frozen', False):
-            config_path = os.path.expanduser('~/Library/Application Support/fk2-hid-midi/config.json')
+            config_path = os.path.expanduser('~/Library/Application Support/key2midi-pad/config.json')
             os.makedirs(os.path.dirname(config_path), exist_ok=True)
         else:
             config_path = os.path.join(base_path, 'config.json')
@@ -165,7 +165,7 @@ def main():
     listener.start()
     
     html_path = os.path.join(base_path, 'dist', 'index.html')
-    window = webview.create_window('fk2-hid-midi', url=f'file://{html_path}', width=500, height=600, resizable=False, js_api=Api())
+    window = webview.create_window('key2midi-pad', url=f'file://{html_path}', width=500, height=600, resizable=False, js_api=Api())
     
     try:
         webview.start()

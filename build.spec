@@ -31,7 +31,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='fk2-hid-midi',
+    name='key2midi-pad',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -52,14 +52,14 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='fk2-hid-midi',
+    name='key2midi-pad',
 )
 
 app = BUNDLE(
     coll,
-    name='fk2-hid-midi.app',
+    name='key2midi-pad.app',
     icon=None,
-    bundle_identifier='com.fk2.hid-midi',
+    bundle_identifier='com.key2midi.pad',
     info_plist={
         'NSHighResolutionCapable': 'True',
         'NSMicrophoneUsageDescription': 'This app needs accessibility access to monitor keyboard input.',

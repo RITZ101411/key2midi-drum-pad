@@ -1,5 +1,5 @@
 [project]
-name = "fk2-hid-midi"
+name = "key2midi-pad"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -7,4 +7,4 @@ requires-python = ">=3.13"
 dependencies = ["pynput", "mido", "python-rtmidi", "pywebview", "pyinstaller"]
 
 [project.scripts]
-fk2-hid-midi = "src.main:main"
+key2midi-pad = "src.main:main"
