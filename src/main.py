@@ -51,6 +51,27 @@ class Api:
     def get_config(self):
         return config
     
+    def check_updates(self):
+        try:
+            from src.updater import check_for_updates
+            update_info = check_for_updates()
+            return update_info
+        except Exception as e:
+            print(f'Update check error: {e}')
+            return None
+    
+    def download_and_install_update(self, download_url):
+        try:
+            from src.updater import download_update, open_dmg
+            dmg_path = download_update(download_url)
+            if dmg_path:
+                open_dmg(dmg_path)
+                return True
+            return False
+        except Exception as e:
+            print(f'Update install error: {e}')
+            return False
+    
     def save_config(self, new_config):
         global config, KEY_TO_NOTE, KEYS, VELOCITY
         config = new_config

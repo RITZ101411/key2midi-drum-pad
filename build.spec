@@ -13,6 +13,8 @@ a = Analysis(
     hiddenimports=[
         'mido.backends.rtmidi',
         'mido.backends.portmidi',
+        'requests',
+        'packaging',
     ],
     hookspath=[],
     hooksconfig={},

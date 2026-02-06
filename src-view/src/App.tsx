@@ -1,5 +1,6 @@
 import { DrumPad } from "./components/Pad";
 import { Settings } from "./components/Settings";
+import { UpdateDialog } from "./components/UpdateDialog";
 import "./styles/index.css";
 import { useState, useEffect } from "react";
 
@@ -7,6 +8,7 @@ function App() {
   const [activePads, setActivePads] = useState<Map<number, number>>(new Map());
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
 
   useEffect(() => {
     const handlePadPress = (e: CustomEvent) => {
@@ -67,6 +69,12 @@ function App() {
           ⚙️ Settings
         </button>
         <button
+          onClick={() => setShowUpdate(true)}
+          className="px-3 py-1 rounded text-xs bg-gray-dark hover:bg-gray-medium text-white"
+        >
+          🔄 Update
+        </button>
+        <button
           onClick={toggleAlwaysOnTop}
           className={`px-2 py-1 rounded text-xs ${
             alwaysOnTop 
@@ -88,6 +96,7 @@ function App() {
         ))}
       </div>
       {showSettings && <Settings onClose={() => setShowSettings(false)} />}
+      {showUpdate && <UpdateDialog onClose={() => setShowUpdate(false)} />}
     </div>
   );
 }
