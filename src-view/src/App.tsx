@@ -61,20 +61,20 @@ function App() {
       <div className="flex gap-2 items-center mb-4">
         <div className="text-gray-light text-xs">Keyboard input only when focused</div>
         <button
+          onClick={() => setShowSettings(true)}
+          className="px-3 py-1 rounded text-xs bg-gray-dark hover:bg-gray-medium text-white"
+        >
+          ⚙️ Settings
+        </button>
+        <button
           onClick={toggleAlwaysOnTop}
-          className={`px-3 py-1 rounded text-xs ${
+          className={`px-2 py-1 rounded text-xs ${
             alwaysOnTop 
               ? 'bg-blue hover:bg-blue-hover' 
               : 'bg-gray-dark hover:bg-gray-medium'
           } text-white`}
         >
-          {alwaysOnTop ? '📌' : 'Pin'}
-        </button>
-        <button
-          onClick={() => setShowSettings(true)}
-          className="px-3 py-1 rounded text-xs bg-gray-dark hover:bg-gray-medium text-white"
-        >
-          ⚙️ Settings
+          📌
         </button>
       </div>
       <div className="grid grid-cols-4 gap-x-4 gap-y-1">
