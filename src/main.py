@@ -52,29 +52,35 @@ class Api:
         if index < len(KEYS):
             key = KEYS[index]
             note = KEY_TO_NOTE.get(key)
-            if note:
-                msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
-                outport.send(msg)
-                print(f'Sent: {msg}')
+            if note and outport:
+                try:
+                    msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
+                    outport.send(msg)
+                    print(f'Sent: {msg}')
+                except Exception as e:
+                    print(f'MIDI send error: {e}')
                 if window:
                     try:
                         window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padPress', {{detail: {{index: {index}, velocity: {VELOCITY}}}}}))")
-                    except:
-                        pass
+                    except Exception as e:
+                        print(f'JS eval error: {e}')
     
     def pad_release(self, index):
         if index < len(KEYS):
             key = KEYS[index]
             note = KEY_TO_NOTE.get(key)
-            if note:
-                msg = mido.Message('note_off', note=note, velocity=0, channel=0)
-                outport.send(msg)
-                print(f'Sent: {msg}')
+            if note and outport:
+                try:
+                    msg = mido.Message('note_off', note=note, velocity=0, channel=0)
+                    outport.send(msg)
+                    print(f'Sent: {msg}')
+                except Exception as e:
+                    print(f'MIDI send error: {e}')
                 if window:
                     try:
                         window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padRelease', {{detail: {{index: {index}}}}}))")
-                    except:
-                        pass
+                    except Exception as e:
+                        print(f'JS eval error: {e}')
 
 def on_press(key):
     if not window_focused:
@@ -85,17 +91,22 @@ def on_press(key):
             return
         
         note = KEY_TO_NOTE.get(key_char)
-        if note:
+        if note and outport:
             pressed_keys.add(key_char)
-            msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
-            outport.send(msg)
-            print(f'Sent: {msg}')
+            try:
+                msg = mido.Message('note_on', note=note, velocity=VELOCITY, channel=0)
+                outport.send(msg)
+                print(f'Sent: {msg}')
+            except Exception as e:
+                print(f'MIDI send error: {e}')
+                pressed_keys.discard(key_char)
+                return
             idx = KEYS.index(key_char)
             if window:
                 try:
                     window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padPress', {{detail: {{index: {idx}, velocity: {VELOCITY}}}}}))")
-                except:
-                    pass
+                except Exception as e:
+                    print(f'JS eval error: {e}')
     except (AttributeError, ValueError):
         pass
 
@@ -105,17 +116,21 @@ def on_release(key):
     try:
         key_char = key.char
         note = KEY_TO_NOTE.get(key_char)
-        if note:
+        if note and outport:
             pressed_keys.discard(key_char)
-            msg = mido.Message('note_off', note=note, velocity=0, channel=0)
-            outport.send(msg)
-            print(f'Sent: {msg}')
+            try:
+                msg = mido.Message('note_off', note=note, velocity=0, channel=0)
+                outport.send(msg)
+                print(f'Sent: {msg}')
+            except Exception as e:
+                print(f'MIDI send error: {e}')
+                return
             idx = KEYS.index(key_char)
             if window:
                 try:
                     window.evaluate_js(f"window.dispatchEvent(new CustomEvent('padRelease', {{detail: {{index: {idx}}}}}))")
-                except:
-                    pass
+                except Exception as e:
+                    print(f'JS eval error: {e}')
     except (AttributeError, ValueError):
         pass
 
@@ -132,13 +147,19 @@ def main():
     try:
         outport = mido.open_output('fk2-midi', virtual=True)
         print(f'Default MIDI device: fk2-midi (virtual)')
-    except:
-        outputs = mido.get_output_names()
-        if outputs:
-            outport = mido.open_output(outputs[0])
-            print(f'Default MIDI device: {outputs[0]}')
-        else:
-            print('No MIDI devices available')
+    except Exception as e:
+        print(f'Failed to create virtual MIDI device: {e}')
+        try:
+            outputs = mido.get_output_names()
+            if outputs:
+                outport = mido.open_output(outputs[0])
+                print(f'Default MIDI device: {outputs[0]}')
+            else:
+                print('No MIDI devices available')
+                outport = None
+        except Exception as e:
+            print(f'Failed to open MIDI device: {e}')
+            outport = None
     
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
     listener.start()
