@@ -119,10 +119,16 @@ def on_release(key):
     except (AttributeError, ValueError):
         pass
 
+def cleanup():
+    global listener, outport
+    if listener:
+        listener.stop()
+    if outport:
+        outport.close()
+
 def main():
-    global window, outport
+    global window, outport, listener
     
-    # デフォルトデバイスを開く
     try:
         outport = mido.open_output('fk2-midi', virtual=True)
         print(f'Default MIDI device: fk2-midi (virtual)')
@@ -140,7 +146,11 @@ def main():
     html_path = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'dist', 'index.html'))
     print(f"Loading HTML from: {html_path}")
     window = webview.create_window('fk2-hid-midi', url=f'file://{html_path}', width=500, height=600, resizable=False, js_api=Api())
-    webview.start()
+    
+    try:
+        webview.start()
+    finally:
+        cleanup()
 
 if __name__ == "__main__":
     main()
